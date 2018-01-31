@@ -1,5 +1,6 @@
 package jeuDeLaVieTest;
 // Je dis de la merde bleu
+// Ceci est une modif temporaire
 public class Test {
 
 	public static void main(String[] args) {
