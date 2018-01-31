@@ -1,5 +1,5 @@
 package jeuDeLaVieTest;
-// Je dis de la merde
+// Je dis de la merde bleu
 public class Test {
 
 	public static void main(String[] args) {
