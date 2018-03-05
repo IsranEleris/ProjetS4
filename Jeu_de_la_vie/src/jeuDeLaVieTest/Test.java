@@ -1,4 +1,4 @@
-package projets4;
+package jeuDeLaVieTest;
 
 public class Test {
 	static ListeChainee plateau = new ListeChainee();
@@ -9,7 +9,7 @@ public class Test {
 		}
 		return 0;
 	}
-	public static boolean CelluleVivante(int x, int y){    //Méthode calculant l'état d'une cellule vivante à l'état n pour l'état n+1, renvoi vrai si elle reste en vie et faux si elle va mourir
+	public static int Voisins(int x, int y){    //Méthode calculant le nombre de vosins vivant d'une cellule morte ou vivante et retourne ce nombre.
 		int c=0;
 		c+=Cellule(x-1,y-1);
 		c+=Cellule(x,y-1);
@@ -19,44 +19,45 @@ public class Test {
 		c+=Cellule(x+1,y);
 		c+=Cellule(x+1,y-1);
 		c+=Cellule(x-1,y+1);
-		if((c==2 || c==3)){
-			return true;
-		}else
-			return false;
+	    return c;
 	}
 
 
-	public static boolean CelluleMorte(int x, int y){  //Pour les cellules mortes comprises dans xMax/yMin et xMin/yMax on vérifie le nombre de voisins vivants, si il est égal à 3 la cellule né au temps n+1 sinon elle reste morte
-		int c = 0;
-		c+=Cellule(x-1,y-1);
-		c+=Cellule(x+1,y+1);
-		c+=Cellule(x+1,y-1);
-		c+=Cellule(x-1,y+1);
-		c+=Cellule(x,y+1);
-		c+=Cellule(x+1,y);
-		c+=Cellule(x-1,y);
-		c+=Cellule(x,y-1);
-		if(c==3){
-			return true;
-		}else
-			return false;
-	}
+	public static ListeChainee Voisins(int x, int y){    // Stocke les cellules mortes dans une liste chainee
+	    ListeChainee voisins = new ListeChainee();
+	    if(!(plateau.contains(x-1,y))) voisins.put(new Cellule(x-1,y));
+        if(!(plateau.contains(x+1,y))) voisins.put(new Cellule(x+1,y));
+        if(!(plateau.contains(x,y-1))) voisins.put(new Cellule(x,y-1));
+        if(!(plateau.contains(x,y+1))) voisins.put(new Cellule(x,y+1));
+        if(!(plateau.contains(x-1,y-1))) voisins.put(new Cellule(x-1,y-1));
+        if(!(plateau.contains(x-1,y+1))) voisins.put(new Cellule(x-1,y+1));
+        if(!(plateau.contains(x+1,y-1))) voisins.put(new Cellule(x+1,y-1));
+        if(!(plateau.contains(x+1,y-1))) voisins.put(new Cellule(x+1,y-1));
+        return voisins;
+    }
 
-	public static void plateauPlusUn(){  //calcule l'étape n+1 du jeu de la vie
+
+
+	public static void plateauPlusUn() {  //calcule l'étape n+1 du jeu de la vie
 		ListeChainee plateauSuiv;
 		plateauSuiv = plateau.clone();
-		int xMin = plateau.getxMin();
-		int xMax = plateau.getyMax();
-		int yMin = plateau.getyMin();
-		int yMax = plateau.getyMax();
-		for(int y = yMax; y<=yMin; y--){ //Parcours de haut en bas pour la dimension  verticale
-			for (int x = xMin; x<= xMax; x++){   // Parcours de gauche à droite pour la dimension horizontale
-				if(Cellule(y,x)==1){     // Cas d'une cellule déjà vivante au temps n
-					if(!CelluleVivante(y,x))    // Si la cellule a 2 ou 3 voisins au temps n elle reste en vie et on ne touche à rien, sinon on la supprime au temps n+1
-						plateauSuiv.remove(new Cellule(y,x));
-				}else{    //Cas d'une cellule non vivante au temps n
-					if(CelluleMorte(y,x))   // Si la cellule comprends exactement 3 voisins au temps n, elle naît au temps n+1
-						plateauSuiv.add(new Cellule(y,x));
+		ListeChainee NouvelleCellules = new ListeChainee();    //On stocke toutes les nouvelles cellules mortes à vivantes pour ne pas les "ajouter deux fois".
+		Maillon i = plateau.getTete();
+		while (i.getSuivant != null) {
+			int x = i.getElement().getLigne();
+			int y = i.getElement().getColonne();
+			int voisins = Voisins(x, y);
+			if (!(voisins == 3 || voisins == 2)) {
+				plateauSuiv.remove(new Cellule(x, y));
+			}
+			ListeChainee tmp = Voisins(x, y);
+			Maillon j = tmp.getTete();
+			while (j.suivant != null) {
+				int x1 = j.getElement().getLigne();
+				int y1 = j.getElement().getColonne();
+				if (Voisins(x1, y1) == 3 && !(NouvelleCellules.contains(new Maillon(new Cellule(x1,y1)),null))){
+					plateauSuiv.put(x1, y1);
+					NouvelleCellules.insert((new Maillon(new Cellule(x1, x2)), null), NouvelleCellules);
 				}
 			}
 		}
@@ -65,12 +66,12 @@ public class Test {
 
 
 	public static void main(String[] args) {
-
-		while(true){
+		int c = 20;
+		while(c<20) {
 			plateauPlusUn();
 			plateau.toString();
+			c++;
 		}
-
 	}
 
 }
