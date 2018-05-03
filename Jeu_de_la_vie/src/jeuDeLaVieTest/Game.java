@@ -7,11 +7,11 @@ import java.io.IOException;
 
 public class Game {
 
-    private static boolean circular = true;
-    private static int topTerminal = 10;
-    private static int lowTerminal = -11;
-    private static int leftTerminal = -10;
-    private static int rightTerminal = 11;
+    private static boolean circular;
+    private static int topTerminal;
+    private static int lowTerminal;
+    private static int leftTerminal;
+    private static int rightTerminal;
 
     private static void print(LinkedList<Cell> list) {
         int maxTop = topTerminal, maxLow = lowTerminal, maxLeft = leftTerminal, maxRight = rightTerminal;
@@ -288,15 +288,21 @@ public class Game {
     private static LinkedList<Cell> generateStep(LinkedList<Cell> gameBoard, int nbStep) {
         LinkedList<Cell> list = gameBoard.clone();
         int time = 0;
-        int i;
-        for (i = 0; i < nbStep; i++) {
-            System.out.println(i);
-            long start = System.currentTimeMillis();
-            list = nextGameBoard(list);
-            long end = System.currentTimeMillis();
-            print(list);
-            time += (end - start);
-        }
+        int i = 0;
+        Timer t = new Timer(200, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(i);
+                long start = System.currentTimeMillis();
+                list = nextGameBoard(list);
+                long end = System.currentTimeMillis();
+                print(list);
+                time += (end - start);
+                i++;
+            }
+        });
+        t.start();
+        while(i<nbstep);
+        t.stop();
         System.out.println("time = " + time);
         return list;
     }
@@ -499,48 +505,92 @@ public class Game {
         return liste.sort();
     }
 
-    public static void main(String [] args) {
-        long start, end;
-        start = System.currentTimeMillis();
-        LinkedList<Cell> list = loader("C:\\Users\\Bonjour\\Documents\\Cours\\Jeu_de_la_vie\\src\\jeuDeLaVieTest\\vaisseau.lif");
-        end = System.currentTimeMillis();
-        System.out.println("load: " + (end - start));
-        start = System.currentTimeMillis();
-        print(list);
-        end = System.currentTimeMillis();
-        System.out.println("print list: " + (end - start));
-        System.out.println(list);
+    public static void main(String [] Args) {
 
-        list = generateStep(list, 20);
-        System.out.println(list);
-//        print(list);
-
-        int max = 10;
-        int ca = calculAsymptotique(list, max);
-        if (ca<0) {
-            System.out.println("Mort au bout de " + (-ca) + " cycles.");
-        } else if (ca == 2*max+1){
-            System.out.println("Etat inconnu de la mort");
-        } else if (ca <=max){
-            System.out.println("Etat périodique au bout de " + ca + " cycles au maximum.");
-            int[] p = periode(list, ca, false);
-            System.out.println("La période est de " + p[0] + ".");
-            if(p[0]!=1) {
-                int qqueue = queue(list, p[0], false);
-                System.out.println("Il y a " + qqueue + " cycles avant la structure périodique.");
-            }
-        } else if (ca <= 2* max){
-            ca = ca-max;
-            System.out.println("Etat de decalage au bout de " + ca + " cycles au maximum.");
-            int[] p = periode(list, ca, true);
-            System.out.println("La période est de " + p[0] + " avec un décalage de " + p[1] + " lignes et " + p[2] + " colonnes.");
-            if(p[0]!=1) {
-                int qqueue = queue(list, p[0], true);
-                System.out.println("Il y a  "+ qqueue + " cycles avant la structure périodique (en décalage).");
-            }
-        } else {
-            System.out.println("wut !!!");
+        if (Args[0].equals("-name")){
+            System.out.println("Jean-Pacôme Delmas et Romain Villebonnet");
         }
+
+        else if (Args[0].equals("-h")){
+            System.out.println("-h : Affiche cette aide.");
+            System.out.println("-name : Affiche les noms et prénoms des auteurs.");
+            System.out.println("-s d fichier.lif : Simule des générations du jeu avec leur numéro de génération pendant d.");
+            System.out.println("-f d fichier.lif haut bas gauche droite : Comme -s, mais dans un monde fini.");
+            System.out.println("-t d fichier.lif haut bas gauche droite : Comme -f, mais dans un monde circulaire (tore).");
+            System.out.println("-c max fichier.lif : Calcule le type d'évolution du jeu sans dépasser la duréée max.");
+            System.out.println("-cf max fichier.lif haut bas gauche droite : Calcule le type d'évolution du jeu sans dépasser la durée max dans un monde fini.");
+            System.out.println("-ct max fichier.lif haut bas gauche droite : Calcule le type d'évolution du jeu sans dépasser la durée max dans un tore.");
+            System.out.println("(Pas implémenté) -w max dossier : Comme -c, mais pour tout les fichiers du dossier, les résultats sont sortis sous la forme d'un fichier HTML.");
+        }
+
+        else if (Args[0].equals("-s") || Args[0].equals("-f") || Args[0].equals("-t")){
+            if (Args[0].equals("-t")){
+                circular = true;
+            }else {
+                circular = false;
+            }
+            if (Args[0].equals("-s")){
+                topTerminal = 0;
+                lowTerminal = 0;
+                leftTerminal = 0;
+                rightTerminal = 0;
+            }else {
+                topTerminal = Args[3];
+                lowTerminal = Args[4];
+                leftTerminal = Args[5];
+                rightTerminal = Args[6];
+            }
+            int d = Integer.parseInt(Args[1]);
+            LinkedList<Cell> list = loader(Args[2]);
+            generateStep(list, d);
+        }
+
+        else if (Args[0].equals("-c") || Args[0].equals("-cf") || Args[0].equals("-ct")){
+            if (Args[0].equals("-ct")){
+                circular = true;
+            }else {
+                circular = false;
+            }
+            if (Args[0].equals("-c")){
+                topTerminal = 0;
+                lowTerminal = 0;
+                leftTerminal = 0;
+                rightTerminal = 0;
+            }else {
+                topTerminal = Args[3];
+                lowTerminal = Args[4];
+                leftTerminal = Args[5];
+                rightTerminal = Args[6];
+            }
+            int max = Integer.parseInt(Args[1]);
+            LinkedList<Cell> list = loader(Args[2]);
+            int ca = calculAsymptotique(list, max);
+            if (ca<0) {
+                System.out.println("Mort au bout de " + (-ca) + " cycles.");
+            } else if (ca == 2*max+1){
+                System.out.println("Etat inconnu.");
+            } else if (ca <=max){
+                System.out.println("Etat périodique au bout de " + ca + " cycles au maximum. (re-spécifié si différent)");
+                int[] p = periode(list, ca, false);
+                System.out.println("La période est de " + p[0] + ".");
+                if(p[0]!=1) {
+                    int qqueue = queue(list, p[0], false);
+                    System.out.println("Il y a " + qqueue + " cycles avant la structure périodique.");
+                }
+            } else if (ca <= 2* max){
+                ca = ca-max;
+                System.out.println("Etat de decalage au bout de " + ca + " cycles au maximum.");
+                int[] p = periode(list, ca, true);
+                System.out.println("La période est de " + p[0] + " avec un décalage de " + p[1] + " lignes et " + p[2] + " colonnes.");
+                if(p[0]!=1) {
+                    int qqueue = queue(list, p[0], true);
+                    System.out.println("Il y a  "+ qqueue + " cycles avant la structure périodique (en décalage).");
+                }
+            } else {
+                System.out.println("Une erreur c'est produite.");
+            }
+        }
+
     }
 
 }
