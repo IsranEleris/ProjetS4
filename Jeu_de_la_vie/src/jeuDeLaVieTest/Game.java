@@ -291,28 +291,30 @@ public class Game {
 
     private static generateStep(LinkedList<Cell> gameBoard, int nbStep) {
         LinkedList<Cell> list = gameBoard.clone();
-        int time = 0;
-        int i = 0;
-        Timer t = new Timer(200, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (i<nbStep) {
-                    System.out.println(i);
+        t.start();
+        int delay = 0; // delay for 5 sec.
+        int period = 200; // repeat every sec.
+        int count = 0;
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask()
+        {
+            public void run()
+            {
+                if (count<nbStep) {
+                    System.out.println(count);
                     long start = System.currentTimeMillis();
                     nextGameBoard(list);
                     long end = System.currentTimeMillis();
                     print(list);
                     time += (end - start);
                     System.out.println("time = " + time);
-                    i++;
-                }else if (i==nbStep){
-                    System.out.println("Execution terminée. Veuillez appuyer sur une touche pour sortir.");
+                }else if (count==nbStep){
+                    timer.stop()
                 }
+                count++;
             }
-        });
-        t.start();
-        try { System.in.read(); }
-        catch (IOException e){}
-        t.stop();
+        }, delay, period);
+        timer.start();
     }
 
     //retourne la taille de la queue.
