@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.*;
+import javax.swing.Timer; 
+import java.awt.event.*; 
+import java.awt.Event; 
 
 public class Game {
 
@@ -285,26 +289,30 @@ public class Game {
         return gameBoard;
     }
 
-    private static LinkedList<Cell> generateStep(LinkedList<Cell> gameBoard, int nbStep) {
+    private static generateStep(LinkedList<Cell> gameBoard, int nbStep) {
         LinkedList<Cell> list = gameBoard.clone();
         int time = 0;
         int i = 0;
         Timer t = new Timer(200, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println(i);
-                long start = System.currentTimeMillis();
-                list = nextGameBoard(list);
-                long end = System.currentTimeMillis();
-                print(list);
-                time += (end - start);
-                i++;
+                if (i<nbStep) {
+                    System.out.println(i);
+                    long start = System.currentTimeMillis();
+                    nextGameBoard(list);
+                    long end = System.currentTimeMillis();
+                    print(list);
+                    time += (end - start);
+                    System.out.println("time = " + time);
+                    i++;
+                }else if (i==nbStep){
+                    System.out.println("Execution terminée. Veuillez appuyer sur une touche pour sortir.");
+                }
             }
         });
         t.start();
-        while(i<nbstep);
+        try { System.in.read(); }
+        catch (IOException e){}
         t.stop();
-        System.out.println("time = " + time);
-        return list;
     }
 
     //retourne la taille de la queue.
@@ -535,10 +543,10 @@ public class Game {
                 leftTerminal = 0;
                 rightTerminal = 0;
             }else {
-                topTerminal = Args[3];
-                lowTerminal = Args[4];
-                leftTerminal = Args[5];
-                rightTerminal = Args[6];
+                topTerminal = Integer.parseInt(Args[3]);
+                lowTerminal = Integer.parseInt(Args[4]);
+                leftTerminal = Integer.parseInt(Args[5]);
+                rightTerminal = Integer.parseInt(Args[6]);
             }
             int d = Integer.parseInt(Args[1]);
             LinkedList<Cell> list = loader(Args[2]);
@@ -557,10 +565,10 @@ public class Game {
                 leftTerminal = 0;
                 rightTerminal = 0;
             }else {
-                topTerminal = Args[3];
-                lowTerminal = Args[4];
-                leftTerminal = Args[5];
-                rightTerminal = Args[6];
+                topTerminal = Integer.parseInt(Args[3]);
+                lowTerminal = Integer.parseInt(Args[4]);
+                leftTerminal = Integer.parseInt(Args[5]);
+                rightTerminal = Integer.parseInt(Args[6]);
             }
             int max = Integer.parseInt(Args[1]);
             LinkedList<Cell> list = loader(Args[2]);
