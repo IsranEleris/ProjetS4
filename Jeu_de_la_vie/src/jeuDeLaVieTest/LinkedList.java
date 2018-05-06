@@ -4,20 +4,34 @@ public class LinkedList<T extends Comparable<Object>> {
 
 	private Link<T> head;
 
+    /**
+     * Construit une liste vide.
+     */
 	public LinkedList() {
 		head = null;
 	}
 
+    /**
+     * Contstruit une liste avec une tête.
+     * @param head
+     */
 	public LinkedList(Link<T> head) {
 		this.head = head;
 	}
 
+    /**
+     * Indique si une liste est vide.
+     * @return true si la liste est vide.
+     */
 	public boolean isEmpty() {
-		if (head == null)
-			return true;
-		return false;
+		return (head == null);
 	}
 
+	/**
+	 * Test l'égalité d'objet.
+	 * @param o Objet a comparer à this.
+	 * @return true si les deux objets ont les mêmes valeurs pour chaque élémént de la liste.
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -38,20 +52,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		return true;
 	}
 
-	public boolean containsAll(T element) {
-		if (this.isEmpty())
-			return false;
-		else {
-			Link<T> tmp = head;
-			while (tmp != null) {
-				if (tmp.getElement().equals(element))
-					return true;
-				tmp = tmp.getNext();
-			}
-			return false;
-		}
-	}
-
+    /**
+     * Indique si un élément est contenu dans la liste. (la liste doit être triée avec des élément comparable dans l'odre croissant).
+     * @param element Element a rechercher.
+     * @return true si l'élément est dans la liste.
+     */
 	public boolean contains(T element) {
 		if (this.isEmpty())
 			return false;
@@ -64,6 +69,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		}
 	}
 
+    /**
+     * Indique si un élément est contenu dans la liste. (la liste doit être triée avec des élément comparable dans l'odre décroissant).
+     * @param element Element a rechercher.
+     * @return true si l'élément est dans la liste.
+     */
 	public boolean containsReverse(T element) {
 		if (this.isEmpty())
 			return false;
@@ -76,6 +86,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		}
 	}
 
+    /**
+     * Renvoie le premier maillon contenant element.
+     * @param element
+     * @return le maillon correspondant à l'élément element.
+     */
 	public Link<T> get(T element) {
 		if (this.isEmpty())
 			return null;
@@ -90,6 +105,10 @@ public class LinkedList<T extends Comparable<Object>> {
 		}
 	}
 
+    /**
+     * Indique la taille de la liste chainée..
+     * @return
+     */
 	public int size() {
 		if (this.isEmpty())
 			return 0;
@@ -104,45 +123,31 @@ public class LinkedList<T extends Comparable<Object>> {
 		}
 	}
 
+    /**
+     * Renvoie une copie de la liste passée en paramètre. (Ne copie pas les T, uniquement les maillons)
+     * @return
+     */
 	public LinkedList<T> clone() {
 		if (this.isEmpty())
 			return new LinkedList<T>();
-		else {
-			LinkedList<T> clonedList = new LinkedList<T>();
-			clonedList.head = new Link<T>(head.getElement());
-			Link<T> tmp = head;
-			Link<T> clonedLink = clonedList.head;
-			while (tmp.getNext()!= null){
-				Link<T> clonedLinkNext = new Link<T>(tmp.getNext().getElement());
-				clonedLink.setNext(clonedLinkNext);
-				clonedLink = clonedLink.getNext();
-				tmp = tmp.getNext();
-			}
-			return clonedList;
+		LinkedList<T> clonedList = new LinkedList<T>();
+		clonedList.head = new Link<T>(head.getElement());
+		Link<T> tmp = head;
+		Link<T> clonedLink = clonedList.head;
+		while (tmp.getNext()!= null){
+			Link<T> clonedLinkNext = new Link<T>(tmp.getNext().getElement());
+			clonedLink.setNext(clonedLinkNext);
+			clonedLink = clonedLink.getNext();
+			tmp = tmp.getNext();
 		}
+		return clonedList;
 	}
 
-	public LinkedList<T> cloneBis(int start, int end){
-		if (this.isEmpty())
-			return new LinkedList<T>();
-		else if (start <= this.size() && end <= this.size() && start <= end && start >= 1 && end >= 1){
-			LinkedList<T> clonedList = new LinkedList<T>();
-			int acc = 1;
-			Link<T> tmp = head;
-			while (acc < start) {
-				tmp = tmp.getNext();
-				acc++;
-			}
-			while (acc < end){
-				clonedList.add(tmp.getElement());
-				tmp = tmp.getNext();
-				acc++;
-			}
-			return clonedList;
-		}
-		return null;
-	}
-
+    /**
+     * Ajoute un élément en tête. (Un élément ne peut être ajouté s'il est déjà dans la liste(supposée triée ordre croissant).
+     * @param element
+     * @return true si l'élément a été ajouté. false sinon
+     */
 	public boolean add(T element) {
 		if (!this.contains(element)) {
 			if (head == null)
@@ -156,6 +161,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		return false;
 	}
 
+    /**
+     * Ajoute un élément en tête. (Un élément ne peut être ajouté s'il est déjà dans la liste(supposée triée ordre décroissant).
+     * @param element
+     * @return true si l'élément a été ajouté. false sinon
+     */
 	public boolean addReverse(T element) {
 		if (!this.containsReverse(element)) {
 			if (head == null)
@@ -169,6 +179,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		return false;
 	}
 
+    /**
+     * Insère un élément à sa place dans la liste(supposée triée, ordre croissant) s'il n'existe pas déjà.
+     * @param element
+     * @return true si l'élément a été ajouté.
+     */
 	public boolean put(T element) {
 		if (!this.contains(element)) {
 			if (this.isEmpty())
@@ -197,6 +212,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		return false;
 	}
 
+    /**
+     * Insère un élément à sa place dans la liste(supposée triée, ordre décroissant) s'il n'existe pas déjà.
+     * @param element
+     * @return true si l'élément a été ajouté.
+     */
 	public boolean putReverse(T element) {
 		if (!this.containsReverse(element)) {
 			if (this.isEmpty())
@@ -225,6 +245,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		return false;
 	}
 
+    /**
+     * Enlève un élément de la liste(supposée triée, ordre croissant).
+     * @param element
+     * @return true si l'élément a été retiré.
+     */
 	public boolean remove(T element) {
 		if (this.contains(element)) {
 			if (head.getElement().equals(element)) {
@@ -250,6 +275,11 @@ public class LinkedList<T extends Comparable<Object>> {
 		return false;
 	}
 
+    /**
+     * Enlève un élément de la liste(supposée triée, ordre décroissant).
+     * @param element
+     * @return
+     */
 	public boolean removeReverse(T element) {
 		if (this.containsReverse(element)) {
 			if (head.getElement().equals(element)) {
@@ -275,18 +305,10 @@ public class LinkedList<T extends Comparable<Object>> {
 		return false;
 	}
 
-	public LinkedList<T> reverse() {
-		if (this.isEmpty())
-			return this;
-		Link<T> tmp = head;
-		LinkedList<T> aux = new LinkedList<T>();
-		while (tmp != null) {
-			aux.add(tmp.getElement());
-			tmp = tmp.getNext();
-		}
-		return aux;
-	}
-
+    /**
+     * Trie la liste, ordre croissant.
+     * @return une nouvelle liste, triée par ordre croissant.
+     */
 	public LinkedList<T> sort() {
 		if (this.size() <= 1)
 			return this;
@@ -299,6 +321,10 @@ public class LinkedList<T extends Comparable<Object>> {
 		return res;
 	}
 
+    /**
+     * Trie la liste, ordre décroissant.
+     * @return une nouvelle liste, triée par ordre décroissant.
+     */
 	public LinkedList<T> sortReverse() {
 		if (this.size() <= 1)
 			return this;
@@ -311,64 +337,15 @@ public class LinkedList<T extends Comparable<Object>> {
 		return res;
 	}
 
-	public LinkedList<T> insert(T element) {
-		if (this.isEmpty())
-			return new LinkedList<T>(new Link<T>(element));
-		else if (element.compareTo(head.getElement()) < 0) {
-			this.add(element);
-			return this;
-		} else {
-			T elementHead = head.getElement();//tmp de la head
-			this.setHead(head.getNext());//on vire la head de la list
-			LinkedList<T> listRec = this.insert(element);//.add(list.head.getElement());
-			listRec.add(elementHead);
-			return listRec;
-		}
-	}
-
-	public LinkedList<T> merge(LinkedList<T> l1, LinkedList<T> l2) {
-		T elementHead;
-		if (l1.head == null)
-			return l2;
-		else if (l2.head == null)
-			return l1;
-		else
-			elementHead = l1.head.getElement();
-		l1.setHead(l1.head.getNext());//on vire la head de l1
-		return merge(l1, l2.insert(elementHead));
-	}
-
-	public LinkedList<T> mergeSort() {
-		if (this.size() <= 1)
-			return this;
-		else {
-			int size = this.size() / 2;
-			LinkedList<T> l1 = new LinkedList<T>();
-			LinkedList<T> l2 = new LinkedList<T>();
-			int acc = 0;
-			Link<T> tmp = this.head;
-			while (acc < size) {
-				l1.add(tmp.getElement());
-				tmp = tmp.getNext();
-				acc++;
-			}
-			while (tmp != null) {
-				l2.add(tmp.getElement());
-				tmp = tmp.getNext();
-			}
-			return merge(l1.mergeSort(), l2.mergeSort());
-		}
-	}
-
-	public boolean wellInGameBoard(int i, int j, int x, int y) {
-		return x < i && y < j;
-	}
-
+    /**
+     * Renvoie une version affichable de la liste. Invoque les toString de chacun des maillons.
+     * @return elem1=>elem2=>elem3=>/
+     */
 	public String toString() {
+	    String str = "";
 		if (head == null)
-			return "La liste chainée est vide.";
+			str = "La liste chainée est vide.";
 		else {
-			String str = "";
 			Link<T> tmp = head;
 			while (tmp != null) {
 				str += tmp.toString();
@@ -378,14 +355,22 @@ public class LinkedList<T extends Comparable<Object>> {
 				}
 				tmp = tmp.getNext();
 			}
-			return str;
 		}
+		return str;
 	}
 
+    /**
+     * Renvoie la tête de la liste.
+     * @return
+     */
 	public Link<T> getHead() {
 		return head;
 	}
 
+    /**
+     * Met head a la tête de la liste. La queue est abandonnée si elle n'est pas gérée manuellement.
+     * @param head
+     */
 	public void setHead(Link<T> head) {
 		this.head = head;
 	}
